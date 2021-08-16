@@ -15,7 +15,7 @@ app.use(json());
 app.use(function (req, res, next) {
   if (req.cookies.userId === undefined) {
     console.log(req);
-    res.cookie("userId", uuidv4(), { maxAge: COOKIE_EXPIRY });
+    res.cookie("userId", toString(uuidv4()), { maxAge: COOKIE_EXPIRY });
   }
 
   next();

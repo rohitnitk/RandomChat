@@ -27,6 +27,7 @@ wsServer.on("connection", (client, req) => {
   console.log(userId);
 
   if (availableClients.length >= 2) {
+    console.log("user id when 2: " + userId);
     let recipient = clientsPool.get(getRandomRecipient(userId, clientsPool, availableClients));
 
     if (recipient != undefined) {
