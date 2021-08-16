@@ -7,9 +7,9 @@ const { EMPTY_STRING, DEFAULT_NAME } = require("./utils/constants");
 const { getRandomRecipient } = require("./utils/getRandomRecipient");
 const { handleOnClose } = require("./utils/handleOnClose");
 const { User } = require("./utils/User");
-
+const port = process.env.PORT;
 apps.use(json);
-httpServer.listen(process.env.PORT || 8081, () => console.log("httpSever listeinin at 8081.."));
+httpServer.listen(port || 8081, () => console.log("httpSever listeinin at port " + port));
 const wsServer = new WebSocket.Server({ server: httpServer });
 
 const clientsPool = new Map();
