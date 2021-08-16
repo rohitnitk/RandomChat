@@ -4,6 +4,7 @@ class User {
     this.userId = userId;
     this.recipientUserId = recipientUserId;
     this.client = client;
+    console.log("User class run : " + this);
   }
 }
 
