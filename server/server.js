@@ -1,11 +1,16 @@
 const express = require("express");
+const http = require("http");
 const cookieParser = require("cookie-parser");
 const { v4: uuidv4 } = require("uuid");
 const { COOKIE_EXPIRY } = require("./utils/constants");
+const { json } = require("express");
 const app = express();
-app.use(cookieParser());
+const server = http.createServer(app);
+
 const port = process.env.PORT || 8080;
 
+app.use(cookieParser());
+app.use(json());
 //set cookie in middleware if not
 app.use(function (req, res, next) {
   if (req.cookies.userId === undefined) {
@@ -25,5 +30,5 @@ app.get("/", (req, res) => {
   res.send("Hello WOrs");
 });
 
-app.listen(port, () => console.log("listeining at port " + port));
-module.exports = { app };
+server.listen(port, () => console.log("listeining at port " + port));
+module.exports = { server };

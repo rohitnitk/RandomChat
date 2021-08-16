@@ -1,16 +1,16 @@
-const apps = require("express")();
-const httpServer = require("http").createServer(apps);
+// const apps = require("express")();
+//const httpServer = require("http").createServer(apps);
 const cookieParser = require("cookie");
-const { json } = require("express");
+
 const WebSocket = require("ws");
+const { server } = require("./server");
 const { EMPTY_STRING, DEFAULT_NAME } = require("./utils/constants");
 const { getRandomRecipient } = require("./utils/getRandomRecipient");
 const { handleOnClose } = require("./utils/handleOnClose");
 const { User } = require("./utils/User");
-const port = process.env.PORT || 8081;
-apps.use(json);
-httpServer.listen(port || 8081, () => console.log("httpSever listeinin at port " + port));
-const wsServer = new WebSocket.Server({ server: httpServer });
+
+// app.listen(port || 8081, () => console.log("app http listeinin at port " + port));
+const wsServer = new WebSocket.Server({ server: server });
 
 const clientsPool = new Map();
 const availableClients = [];
