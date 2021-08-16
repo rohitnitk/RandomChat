@@ -3,8 +3,8 @@ const cookieParser = require("cookie-parser");
 const { v4: uuidv4 } = require("uuid");
 const { COOKIE_EXPIRY } = require("./utils/constants");
 const app = express();
-
 app.use(cookieParser());
+const port = process.env.PORT || 8080;
 
 //set cookie in middleware if not
 app.use(function (req, res, next) {
@@ -25,4 +25,5 @@ app.get("/", (req, res) => {
   res.send("Hello WOrs");
 });
 
-app.listen(8080, () => console.log("listeining at 8080..."));
+app.listen(port, () => console.log("listeining at port " + port));
+module.exports = { app };
