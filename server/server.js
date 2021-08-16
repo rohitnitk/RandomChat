@@ -14,8 +14,9 @@ app.use(json());
 //set cookie in middleware if not
 app.use(function (req, res, next) {
   if (req.cookies.userId === undefined) {
-    console.log(req);
-    res.cookie("userId", toString(uuidv4()), { maxAge: COOKIE_EXPIRY });
+    //console.log(req);
+    res.cookie("userId", uuidv4(), { maxAge: COOKIE_EXPIRY });
+    console.log(res.cookie);
   }
 
   next();

@@ -16,7 +16,7 @@ const clientsPool = new Map();
 const availableClients = [];
 
 wsServer.on("connection", (client, req) => {
-  let userId = cookieParser.parse(toString(req.headers.cookie)).userId;
+  let userId = cookieParser.parse(req.headers.cookie).userId;
   if (clientsPool.has(userId)) {
     handleOnClose(userId, clientsPool, availableClients);
   }
@@ -59,8 +59,8 @@ wsServer.on("connection", (client, req) => {
   });
 
   client.on("close", function () {
-    console.log(cookieParser.parse(toString(req.headers.cookie)));
-    userId = cookieParser.parse(toString(req.headers.cookie)).userId;
+    console.log(cookieParser.parse(req.headers.cookie));
+    userId = cookieParser.parse(req.headers.cookie).userId;
     // console.log(clientsPool.get(userId));
     console.log(clientsPool.get(userId) + "left...");
     handleOnClose(userId, clientsPool, availableClients);
