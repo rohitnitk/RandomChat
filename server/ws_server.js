@@ -16,6 +16,8 @@ const clientsPool = new Map();
 const availableClients = [];
 
 wsServer.on("connection", (client, req) => {
+  console.log("Client Connected!");
+  console.log("cookie is : " + req.headers.cookie);
   let userId = cookieParser.parse(req.headers.cookie).userId;
   if (clientsPool.has(userId)) {
     handleOnClose(userId, clientsPool, availableClients);
@@ -23,7 +25,7 @@ wsServer.on("connection", (client, req) => {
   let user = new User(DEFAULT_NAME, userId, client, EMPTY_STRING);
   clientsPool.set(userId, user);
   availableClients.push(userId);
-  console.log("Client Connected!");
+
   console.log(userId);
 
   if (availableClients.length >= 2) {
