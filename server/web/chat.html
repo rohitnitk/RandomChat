@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+            
+        }
+    .container {
+        margin: 0px;
+        border: 1px #000 solid;
+        display:flex;
+       
+        text-align:center;
+        align-items: center;
+        flex-direction:column;
+        align-content: space-around;
+       
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        
+       
+}
+.info{
+	width:100%;
+	max-width:70%;
+    padding: 5px;
+	border:1px solid red;
+	margin:0px;
+   
+    flex-basis: 6vh;
+    overflow: scroll;
+    text-align: left;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-style: italic;
+}
+.chat-box {
+    width:100%;
+	max-width:70%;
+    margin: 0;
+    height: 85vh;
+	border:1px solid red;
+	margin:0px;
+    overflow-y: scroll;
+    
+    
+   
+    background-image: linear-gradient(to bottom, rgba(130, 222, 255, 0), rgba(208, 234, 249, 0.002), rgb(208, 234, 249), rgb(208, 234, 249));
+    
+    
+}
+.typing-container {
+    width:100%;
+	max-width:70%;
+	border:1px solid red;
+	margin:0px;
+    max-height: 1200px;
+   
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0px;
+    margin-top: auto;
+    align-items: center;
+    
+    
+}
+.typing-box {
+    width: 100%;;
+	border:1px solid red;
+	margin:10px;
+    height: 100%; 
+    padding: 1px;  
+    
+}
+.icon-div {
+    width: 40px;;
+	
+	border:1px solid red;
+    height: 35px; 
+    margin: 10px;  
+    
+   
+}
+
+.input-box {
+    flex: 1;
+    text-align: left;
+    width: 100%;
+    overflow: scroll;
+    height: auto;
+    max-height: 120px;
+    padding: 5px;
+    font-size: 14pt;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+.msg-display {
+    padding: 5px;
+    border-radius: 5px;
+    border: 0.5px #ccc solid;
+    width: 50%;
+    margin: 5px;
+    text-align: left;
+    align-self: flex-start;
+    background-color: white;
+
+}
+.footer {
+    height: 30px;
+}
+
+.header {
+    height: 20px;
+}
+
+@media only screen and ( max-width:768px ){
+	
+	.info, .chat-box, .typing-container{
+		width:100%;
+        max-width: 100%;
+		
+		border:1px solid red;
+	}
+    .footer {
+        height: 0px;
+    }
+    .header {
+        height: 2px;
+    }
+ .list {
+     max-height: inherit;
+ }
+   
+}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header" ></div>
+        <div class="info" >You are conneted to  USERNAME</div>
+        <div class="chat-box" >
+            
+                <div class="msg-display">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+            <div class="msg-display">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+            <div class="msg-display">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+            <div class="msg-display">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+           
+
+        </div>
+        <div class="typing-container">
+            <div class="typing-box">
+                <div  class="input-box" contenteditable="true" ></div> 
+            </div>
+            <div class="icon-div">
+                <button id="sendBtn"><span class="material-icons">send</span></button>
+            </div>
+            
+        </div>
+        <div class="footer" ></div>
+    </div>
+    
+</body>
+</html>
+
