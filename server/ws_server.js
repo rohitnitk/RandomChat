@@ -6,7 +6,7 @@ const WebSocket = require("ws");
 const { EMPTY_STRING, DEFAULT_NAME } = require("./utils/constants");
 const { getRandomRecipient } = require("./utils/getRandomRecipient");
 const { handleOnClose } = require("./utils/handleOnClose");
-// const { User } = require("./utils/User");
+const { User } = require("./utils/user");
 
 apps.use(json);
 httpServer.listen(process.env.PORT || 8081, () => console.log("httpSever listeinin at 8081.."));
@@ -65,12 +65,3 @@ wsServer.on("connection", (client, req) => {
     handleOnClose(userId, clientsPool, availableClients);
   });
 });
-
-class User {
-  constructor(name, userId, client, recipientUserId) {
-    this.name = name;
-    this.userId = userId;
-    this.recipientUserId = recipientUserId;
-    this.client = client;
-  }
-}
