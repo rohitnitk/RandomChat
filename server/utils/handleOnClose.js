@@ -1,5 +1,5 @@
 const { EMPTY_STRING } = require("./constants");
-const { User } = require("./user");
+const { User } = require("./User");
 
 function handleOnClose(userId, clientsPool, availableClients) {
   let index = availableClients.indexOf(userId);
