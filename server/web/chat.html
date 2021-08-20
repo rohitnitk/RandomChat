@@ -4,173 +4,291 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
+    rel="stylesheet">
+
     <style>
         body {
-            margin: 0px;
-            padding: 0px;
+            margin: 0;
+            padding: 0;
             
         }
-    .container {
-        margin: 0px;
-        border: 1px #000 solid;
-        display:flex;
-       
-        text-align:center;
-        align-items: center;
-        flex-direction:column;
-        align-content: space-around;
-       
-        font-family: Georgia, 'Times New Roman', Times, serif;
+        .border {
+            border: 1px #ccc solid;
+        }
         
+        .container {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            
+            justify-content: center;
+           
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 70%;
+            
+        }
+        .info {
+            min-height: 30px;
+            max-height: 50px;
+            text-align: center;
+            
+        }
+        .chat-box {
+            flex-basis: 100%;
+            overflow-y: scroll;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .chat-item {
+            position: relative;
+            border-color: #ccc;
+            border-radius: 5px;
+            max-width: 70%;
+            min-width: 100px;
+            height: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+            margin-left: 20px;
+            margin-right: 20px;
+            word-break: break-all;
+            
+                       
+        }
+        .left {
+            align-self: flex-start;
+            text-align: left;
+            border-radius: 0px 5px 5px;
+        }
+        .right {
+            align-self: flex-end;
+            text-align: right;
+            background-color: rgba(152, 214, 240, 0.242);
+        }
        
-}
-.info{
-	width:100%;
-	max-width:70%;
-    padding: 5px;
-	border:1px solid red;
-	margin:0px;
-   
-    flex-basis: 6vh;
-    overflow: scroll;
-    text-align: left;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-style: italic;
-}
-.chat-box {
-    width:100%;
-	max-width:70%;
-    margin: 0;
-    height: 85vh;
-	border:1px solid red;
-	margin:0px;
-    overflow-y: scroll;
-    
-    
-   
-    background-image: linear-gradient(to bottom, rgba(130, 222, 255, 0), rgba(208, 234, 249, 0.002), rgb(208, 234, 249), rgb(208, 234, 249));
-    
-    
-}
-.typing-container {
-    width:100%;
-	max-width:70%;
-	border:1px solid red;
-	margin:0px;
-    max-height: 1200px;
-   
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 0px;
-    margin-top: auto;
-    align-items: center;
-    
-    
-}
-.typing-box {
-    width: 100%;;
-	border:1px solid red;
-	margin:10px;
-    height: 100%; 
-    padding: 1px;  
-    
-}
-.icon-div {
-    width: 40px;;
-	
-	border:1px solid red;
-    height: 35px; 
-    margin: 10px;  
-    
-   
+  .right::before {
+  content: '';
+  position: absolute;
+  visibility: visible;
+  
+  top: -1px;
+  right: -10px;
+  border: 10px solid transparent;
+  border-top: 12px solid #ccc;
 }
 
-.input-box {
-    flex: 1;
-    text-align: left;
-    width: 100%;
-    overflow: scroll;
-    height: auto;
-    max-height: 120px;
-    padding: 5px;
-    font-size: 14pt;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-}
-.msg-display {
-    padding: 5px;
-    border-radius: 5px;
-    border: 0.5px #ccc solid;
-    width: 50%;
-    margin: 5px;
-    text-align: left;
-    align-self: flex-start;
-    background-color: white;
-
-}
-.footer {
-    height: 30px;
+.right::after {
+  content: '';
+  position: absolute;
+  visibility: visible;
+  opacity: 1;
+  top: 0px;
+  right: -8px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid rgb(228, 244, 250);
+  border-bottom: 10px solid transparent;
+  
+  clear: both;
 }
 
-.header {
-    height: 20px;
+.left::before {
+    content: '';
+  position: absolute;
+  visibility: visible;
+  
+  top: -1px;
+  left: -10px;
+  border: 10px solid transparent;
+  border-top: 12px solid #ccc;
 }
 
-@media only screen and ( max-width:768px ){
-	
-	.info, .chat-box, .typing-container{
-		width:100%;
-        max-width: 100%;
-		
-		border:1px solid red;
-	}
-    .footer {
-        height: 0px;
-    }
-    .header {
-        height: 2px;
-    }
- .list {
-     max-height: inherit;
- }
-   
+.left::after {
+    content: '';
+  position: absolute;
+  visibility: visible;
+  opacity: 1;
+  top: 0px;
+  left: -8px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid white;
+  border-bottom: 10px solid transparent;
+  
+  clear: both;
 }
+
+
+        .time {
+            align-self: flex-end;
+            text-align: right;
+            font-size: smaller;
+        }
+
+
+        .typing-container {
+            display: flex;
+            flex-direction: row;
+            min-height: 40px;
+            max-height: 300px;
+            align-items: center;
+            justify-content: center;
+        }
+        .input-box {
+          margin: 2px;
+          margin-top: 5px;
+          margin-bottom: 5px;
+          min-height: 30px;
+          max-height: 90%;
+          width: 100%;
+          border-radius: 5px;
+          overflow-y: scroll;
+          padding-left: 10px;
+          padding-top: 5px;
+          
+        }
+
+        .icon-div {
+            border-radius: 5px;
+            margin-right: 2px;
+            margin-bottom: 2px;
+            border: none;
+            align-self: flex-end;
+        }
+
+        .send-btn {
+            border-radius: 17px;
+            border: rgb(255, 255, 255);
+            height: 35px;
+            width: 35px;
+            padding: 2px;
+        }
+
+
+
+        @media only screen and ( max-width:768px ) {
+            .chat-container {
+                width: 100%;
+            }
+        }
     </style>
+
+    <title>Document</title>
 </head>
 <body>
-
-    <div class="container">
-        <div class="header" ></div>
-        <div class="info" >You are conneted to  USERNAME</div>
-        <div class="chat-box" >
-            
-                <div class="msg-display">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
-            <div class="msg-display">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
-            <div class="msg-display">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
-            <div class="msg-display">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
-            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
-            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
-            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
-            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
-            <div class="msg-display" style="align-self: flex-end;">yhis skdfjkdshf is a mesgis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjkis skdfjk</div>
+   <div class="container border">
+       <div class="chat-container border">
+           <div class="info border" id="info">This is info</div>
+           <div class="chat-box border" id="chatBox">
+             
+              <div class="chat-item left border" id="chatItem">Wow..</div>
+              <div class="chat-item right border">Hey</div>
+              <div class="chat-item left border"><span id='msg'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus explicabo nulla veritatis eligendi exercitationem nostrum laborum rerum, aliquid ratione omnis, vitae corporis dolore rem optio quibusdam sint autem illo laboriosam.</span><span class="time" id="time">2:43 am</span></div>
+              
+              <div class="chat-item right border">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ducimus, debitis. Eius nobis minus nemo, provident repudiandae quis recusandae fuga, facere distinctio dicta exercitationem sit quidem veritatis soluta vitae aliquid amet.
+                  
+              </div>
+               
+           </div>
+           <div class="typing-container border">
+               <div class="input-box border" id="inputBox" contenteditable="true"></div>
+               <div class="icon-div ">
+                <button class="send-btn" id="sendBtn">
+                    <span class="material-icons">send</span>
+                </button>
+               </div>
+           </div>
+       </div>
+   </div>
+   <script >
+       
+       document.getElementById("sendBtn").addEventListener("click", function () {
            
+           let inputBox = document.getElementById("inputBox")
+           let msg = (inputBox.textContent.trim() !=="") ? removeUnwantedLines(inputBox) : "";
+           inputBox.innerHTML = "";
+           inputBox.focus();
+           
+           if(msg!=="") {   
+               setChatItem(msg, "");    
+           }
+       })
+       function setChatItem(msg, sender) {
+           let chatItem = document.createElement("div");
+           chatItem.className = (sender === "me")? "chat-item border right" : "chat-item border left";
+           let chatBox = document.getElementById("chatBox");
+           let msgSpan = document.createElement("span");
+           msgSpan.innerHTML = msg;
+           let timeSpan = document.createElement("span");
+           timeSpan.textContent = getTime();
+           timeSpan.className = "time";
+           chatItem.appendChild(msgSpan);
+           chatItem.appendChild(timeSpan);
+           chatBox.appendChild(chatItem);
+           chatBox.scrollTop = chatBox.scrollHeight;
+       }
 
-        </div>
-        <div class="typing-container">
-            <div class="typing-box">
-                <div  class="input-box" contenteditable="true" ></div> 
-            </div>
-            <div class="icon-div">
-                <button id="sendBtn"><span class="material-icons">send</span></button>
-            </div>
-            
-        </div>
-        <div class="footer" ></div>
-    </div>
-    
+       function getTime() {
+           let date = new Date();
+           let hours = date.getHours();
+           let meridian = (hours < 12) ? "am" : "pm" ;
+           if(hours == 0) {
+               hours += 12;
+           }
+           else {
+               if( hours > 12) {
+                hours = hours % 12;
+               }
+           }
+
+           let minutes = date.getMinutes();
+           if(minutes.length <2) {
+               minutes = "0" + minutes;
+           }
+        
+           return hours + ":" + minutes + " " + meridian;
+       }
+
+       function removeUnwantedLines(node) {
+           let msgHtml = ""
+           let children = [].slice.call(node.childNodes);
+           var start = 0, end = children.length;
+           while(children[start].textContent ==="") {
+               console.log(children[start])
+               start ++;
+           }
+           for(let i=children.length-1; i>=0; i--) {
+               if(children[i].textContent !== "") {
+                  
+                   break;
+               }
+               end  --;
+
+           }
+          children = children.slice(start, end)
+         for(let i=0; i<children.length; i++) {
+            console.log(children[i].nodename)
+             if(children[i].outerHTML === undefined) {
+                
+                msgHtml += children[i].textContent;
+             } else {
+                 msgHtml += children[i].outerHTML
+             }
+
+         }
+
+           return msgHtml;
+       }
+   </script>
 </body>
-</html>
 
+</html>

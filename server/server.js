@@ -4,6 +4,7 @@ const cookie_parser = require("cookie-parser");
 const { v4: uuidv4 } = require("uuid");
 const { COOKIE_EXPIRY } = require("./utils/constants");
 const { json } = require("express");
+const path = require("path");
 const app = express();
 const server = http.createServer(app);
 
@@ -14,7 +15,6 @@ app.use(json());
 //set cookie in middleware if not
 app.use(function (req, res, next) {
   if (req.cookies.userId === undefined) {
-    //console.log(req);
     res.cookie("userId", uuidv4(), { maxAge: COOKIE_EXPIRY });
     console.log(res.cookie);
   }
@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
   }
 
   //else console.log(req.cookies.cookieName)
-  res.send("Hello WOrs");
+  res.sendFile(path.join(__dirname, "/web/chat.html"));
 });
 
 server.listen(port, () => console.log("listeining at port " + port));
