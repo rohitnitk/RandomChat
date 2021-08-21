@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet">
+    <link rel="stylesheet" href="css/chat.css">
+
+    <title>Document</title>
+</head>
+<body onload="WSConnection()">
+   <div class="container border">
+       <div class="chat-container border">
+           <div class="header border" id="header">
+              <span id="userDesc" class="user-desc">this</span>
+               <button id="nextBtn" class="next-btn">
+                <span class="material-icons" style="font-size: 35px; padding: 0; margin: 0;">skip_next</span>
+               </button>
+           </div>
+           <div class="chat-box border" id="chatBox">
+               <div class="info-board" id="infoBoard">
+                   <div id="loader">
+                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                    <div><i>Finding a random person...</i></div>
+                   </div>
+                   <div class="info"></div>
+               </div>
+            </div>
+           <div class="typing-container border" id="typingContainer">
+               <div class="input-box border" id="inputBox" contenteditable="true"></div>
+               <div class="icon-div ">
+                   <button class="send-btn" id="sendBtn">
+                    <span class="material-icons" style="color: white;">send</span>
+                    </button>
+               </div>
+           </div>
+       </div>
+   </div>
+   <script type="text/javascript" src="scripts/chatScript.js"></script>
+</body>
+
+</html>
