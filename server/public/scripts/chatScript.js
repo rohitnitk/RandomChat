@@ -1,4 +1,4 @@
-var ws = new WebSocket("ws://random-p2p-chat.herokuapp.com");
+var ws = new WebSocket("wss://random-p2p-chat.herokuapp.com");
 
 const CONNECTED = "CONNECTED";
 const ERROR = "ERROR";
