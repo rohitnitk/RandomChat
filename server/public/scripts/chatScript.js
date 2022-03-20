@@ -1,4 +1,4 @@
-var ws = new WebSocket("ws://localhost:8080");
+var ws = new WebSocket(window.origin);
 
 const CONNECTED = "CONNECTED";
 const ERROR = "ERROR";
