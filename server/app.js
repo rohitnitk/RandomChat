@@ -85,13 +85,13 @@ wsServer.on("connection", (client, req) => {
   client.on("close", function () {
     userId = cookieParser.parse(req.headers.cookie).userId;
     let sender = clientsPool.get(userId);
-    clientsPool.delete(userId);
-    try {
-      handleOnUserLeft(sender);
-    } catch (error) {
-      console.log(req.headers.cookie + "," + req.headers.host + "," + req.headers.origin + ":", error);
-      sender.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
+    if (sender !== undefined) {
+      let recipient = clientsPool.get(sender.recipientUserId);
+      if (recipient !== undefined) {
+        recipient.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
+      }
     }
+    clientsPool.delete(userId);
   });
 });
 
@@ -118,7 +118,9 @@ function pairConnect(sender) {
 function handleOnUserLeft(sender) {
   if (sender.recipientUserId !== undefined) {
     let recipient = clientsPool.get(sender.recipientUserId);
-    recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
+    if (recipient !== undefined) {
+      recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
+    }
     clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
   }
 }
