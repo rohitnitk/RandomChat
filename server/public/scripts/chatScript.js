@@ -4,6 +4,7 @@ if (screen.width > 1000) {
 } else {
   ws = new WebSocket("ws://192.168.43.238:8080");
 }
+ws = new WebSocket("wss://random-p2p-chat.herokuapp.com:8080");
 
 const CONNECTED = "CONNECTED";
 const ERROR = "ERROR";
