@@ -54,8 +54,10 @@ wsServer.on("connection", (client, req) => {
              * 2. remove 'send to' of both user
              */
             let recipient = clientsPool.get(sender.recipientUserId);
-            recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
-            clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
+            if (recipient !== undefined) {
+              recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
+              clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
+            }
             clientsPool.set(sender.userId, new User(sender.name, sender.userId, sender.client));
           }
           availableClients.add(sender.userId);
@@ -88,7 +90,8 @@ wsServer.on("connection", (client, req) => {
     if (sender !== undefined) {
       let recipient = clientsPool.get(sender.recipientUserId);
       if (recipient !== undefined) {
-        recipient.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
+        clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
+        recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
       }
     }
     clientsPool.delete(userId);
@@ -107,10 +110,12 @@ function pairConnect(sender) {
       }
     }
     let recipient = clientsPool.get(recipientId);
-    clientsPool.set(recipientId, new User(recipient.name, recipient.userId, recipient.client, sender.userId));
-    clientsPool.set(sender.userId, new User(sender.name, sender.userId, sender.client, recipientId));
-    recipient.client.send(`${createMessage(CONNECTED, sender.name)}`);
-    sender.client.send(`${createMessage(CONNECTED, recipient.name)}`);
+    if (recipient !== undefined) {
+      clientsPool.set(recipientId, new User(recipient.name, recipient.userId, recipient.client, sender.userId));
+      clientsPool.set(sender.userId, new User(sender.name, sender.userId, sender.client, recipientId));
+      recipient.client.send(`${createMessage(CONNECTED, sender.name)}`);
+      sender.client.send(`${createMessage(CONNECTED, recipient.name)}`);
+    }
   }
 }
 ``;

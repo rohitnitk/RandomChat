@@ -21,7 +21,7 @@ document.getElementById("sendBtn").addEventListener("click", function () {
   chatBox.scrollTop = chatBox.scrollHeight;
 });
 document.getElementById("homeBtn").addEventListener("click", function () {
-  ws.send(createMessage(LEFT, EMPTY_STRING));
+  ws.close();
   window.history.back();
 });
 document.getElementById("nextBtn").addEventListener("click", function () {
