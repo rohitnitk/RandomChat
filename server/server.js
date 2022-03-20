@@ -17,21 +17,19 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(function (req, res, next) {
   if (req.cookies.userId === undefined) {
     res.cookie("userId", uuidv4(), { maxAge: COOKIE_EXPIRY });
-    console.log(res.cookie);
   }
 
   next();
 });
 
 app.post("/", (req, res) => {
-  console.log(req.body);
   res.cookie("name", req.body.name, { maxAge: COOKIE_EXPIRY });
   res.sendFile(path.join(__dirname, "/views/chat.html"));
 });
 
 app.get("/", (req, res) => {
   if (req.cookies.userId === undefined) {
-    console.log("NOT set cook");
+    console.log("Cookie NOT set!");
   }
 
   //else console.log(req.cookies.cookieName)

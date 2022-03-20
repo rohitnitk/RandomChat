@@ -2,83 +2,123 @@ const cookieParser = require("cookie");
 
 const WebSocket = require("ws");
 const { server } = require("./server");
-const { EMPTY_STRING, LEFT, WAIT, NEXT, CHAT, INFO } = require("./utils/constants");
-const { handleNewChatRequest } = require("./utils/handleNewChatRequest");
-const { handleOnClose } = require("./utils/handleOnClose");
+const { EMPTY_STRING, LEFT, WAIT, NEXT, CHAT, INFO, CONNECTED, ERROR } = require("./utils/constants");
+
 const { User } = require("./utils/User");
 const { createMessage } = require("./utils/createMessage");
-const { handleOnLeft } = require("./utils/handleOnLeft");
+const { use } = require("express/lib/application");
+const { send } = require("express/lib/response");
+
+var fs = require("fs");
+var util = require("util");
+var log_file = fs.createWriteStream(__dirname + "/debug.log", { flags: "a" });
+var log_stdout = process.stdout;
+
+console.log = function (d) {
+  //
+  log_file.write(util.format(d) + "\n");
+  log_stdout.write(util.format(d) + "\n");
+};
 
 const wsServer = new WebSocket.Server({ server: server });
 
 const clientsPool = new Map();
-const availableClients = [];
+const availableClients = new Set();
 
 wsServer.on("connection", (client, req) => {
-  console.log("Client Connected!");
   let userId = cookieParser.parse(req.headers.cookie).userId;
   let name = cookieParser.parse(req.headers.cookie).name;
-  if (clientsPool.has(userId)) {
-    handleOnClose(userId, clientsPool, availableClients);
-  }
-  let user = new User(name, userId, client, EMPTY_STRING);
+  let user = new User(name, userId, client);
   clientsPool.set(userId, user);
-  availableClients.push(userId);
-  () => {
-    let seconds = 0;
-    let fn = setInterval(() => {
-      if (handleNewChatRequest(userId, req, client, clientsPool, availableClients) || seconds > 5000) {
-        clearTimeout(fn);
-      }
-      seconds += 10;
-    }, 10);
-  };
+  availableClients.add(userId);
+  if (availableClients.size > 1) {
+    pairConnect(user);
+  }
   client.on("message", function incoming(msg) {
-    console.log("received: %s", msg);
     userId = cookieParser.parse(req.headers.cookie).userId;
-    let recipientUserId = clientsPool.get(userId).recipientUserId;
-    if (recipientUserId !== EMPTY_STRING) {
-      let recipient = clientsPool.get(recipientUserId);
-
-      let message = JSON.parse(msg);
+    let sender = clientsPool.get(userId);
+    try {
+      let message = JSON.parse(`${msg}`);
 
       switch (message.type) {
-        case LEFT: {
-          handleOnLeft(cookieParser.parse(req.headers.cookie).userId, clientsPool, availableClients);
-          recipient.client.send(`${createMessage(LEFT, message.msg)}`);
-          break;
-        }
-        case NEXT: {
-          availableClients.push(userId);
-          () => {
-            let seconds = 0;
-            let fn = setInterval(() => {
-              if (handleNewChatRequest(userId, req, client, clientsPool, availableClients) || seconds > 5000) {
-                clearTimeout(fn);
-              }
-              seconds += 10;
-            }, 10);
-          };
-          break;
-        }
         case CHAT: {
+          let recipient = clientsPool.get(sender.recipientUserId);
           recipient.client.send(`${createMessage(CHAT, message.msg)}`);
           break;
         }
-        default: {
-          client.send(`${createMessage(INFO, "Please do not tamper with site..")}`);
+
+        case NEXT: {
+          if (sender.recipientUserId !== undefined) {
+            /**
+             * 1. notify receipient (other user)
+             * 2. remove 'send to' of both user
+             */
+            let recipient = clientsPool.get(sender.recipientUserId);
+            recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
+            clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
+            clientsPool.set(sender.userId, new User(sender.name, sender.userId, sender.client));
+          }
+          availableClients.add(sender.userId);
+          if (availableClients.size > 1) {
+            pairConnect(sender);
+          }
+          break;
+        }
+
+        case LEFT: {
+          handleOnUserLeft(sender);
+          break;
         }
       }
-    } else {
-      client.send(`${createMessage("WAIT", "Nobody is available to chat...Or The User you were talking to left...")}`);
+    } catch (error) {
+      console.log(req.headers.cookie + "," + req.headers.host + "," + req.headers.origin + ":", error);
+      sender.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
+      if (sender.recipientUserId !== undefined) {
+        let recipient = clientsPool.get(sender.recipientUserId);
+        if (recipient !== undefined) {
+          recipient.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
+        }
+      }
     }
   });
 
   client.on("close", function () {
     userId = cookieParser.parse(req.headers.cookie).userId;
-
-    if (clientsPool.has(userId)) {
-      handleOnClose(userId, clientsPool, availableClients);
+    let sender = clientsPool.get(userId);
+    clientsPool.delete(userId);
+    try {
+      handleOnUserLeft(sender);
+    } catch (error) {
+      console.log(req.headers.cookie + "," + req.headers.host + "," + req.headers.origin + ":", error);
+      sender.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
     }
   });
 });
+
+function pairConnect(sender) {
+  if (availableClients.size > 1) {
+    let recipientId;
+    for (let item of availableClients) {
+      if (item !== sender.userId) {
+        recipientId = item;
+        availableClients.delete(item);
+        availableClients.delete(sender.userId);
+        break;
+      }
+    }
+    let recipient = clientsPool.get(recipientId);
+    clientsPool.set(recipientId, new User(recipient.name, recipient.userId, recipient.client, sender.userId));
+    clientsPool.set(sender.userId, new User(sender.name, sender.userId, sender.client, recipientId));
+    recipient.client.send(`${createMessage(CONNECTED, sender.name)}`);
+    sender.client.send(`${createMessage(CONNECTED, recipient.name)}`);
+  }
+}
+``;
+
+function handleOnUserLeft(sender) {
+  if (sender.recipientUserId !== undefined) {
+    let recipient = clientsPool.get(sender.recipientUserId);
+    recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
+    clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
+  }
+}

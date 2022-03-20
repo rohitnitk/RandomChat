@@ -33,12 +33,17 @@ body {
   flex: 1;
   margin: 10px;
 }
-.next-btn {
+.btn {
   background-color: rgba(49, 170, 235, 0);
-  margin-right: 10px;
 
   border: none;
   color: white;
+}
+.btn .next-btn {
+  margin-right: 10px;
+}
+.btn .home-btn {
+  margin-left: 10px;
 }
 .chat-box {
   flex-basis: 100%;
@@ -48,7 +53,12 @@ body {
   background-color: aliceblue;
   border: none;
 }
-
+.chat-item-container {
+  width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
 .info-board {
   display: flex;
   flex-direction: column;

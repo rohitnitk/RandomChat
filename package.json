@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/app.js ",
-    "run": "nodemon server/app.js"
+    "dev": "nodemon server/app.js"
   },
   "author": "",
   "license": "ISC",

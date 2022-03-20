@@ -1,6 +1,7 @@
-const ws = new WebSocket("ws://localhost:8080");
+var ws = new WebSocket("ws://localhost:8080");
+
 const CONNECTED = "CONNECTED";
-const WAIT = "WAIT";
+const ERROR = "ERROR";
 const CHAT = "CHAT";
 const NEXT = "NEXT";
 const LEFT = "LEFT";
@@ -14,19 +15,29 @@ document.getElementById("sendBtn").addEventListener("click", function () {
 
   if (msg !== EMPTY_STRING) {
     setChatItem(msg, "me");
+    ws.send(createMessage(CHAT, msg));
   }
+  let chatBox = document.getElementById("chatBox");
+  chatBox.scrollTop = chatBox.scrollHeight;
 });
-
+document.getElementById("homeBtn").addEventListener("click", function () {
+  ws.send(createMessage(LEFT, EMPTY_STRING));
+  window.history.back();
+});
 document.getElementById("nextBtn").addEventListener("click", function () {
+  toggleElement("chatItemContainer", "hide");
   toggleElement("loader", "show");
-  ws.send(createMessage(LEFT, "User left..."));
+  toggleElement("userDesc", "show", EMPTY_STRING);
+  toggleElement("info", "hide");
+  toggleElement("typingContainer", "hide");
+  resetChatContainer();
   ws.send(createMessage(NEXT, EMPTY_STRING));
 });
 
 function setChatItem(msg, sender) {
+  let chatItemContainer = document.getElementById("chatItemContainer");
   let chatItem = document.createElement("div");
   chatItem.className = sender === "me" ? "chat-item border right" : "chat-item border left";
-  let chatBox = document.getElementById("chatBox");
   let msgSpan = document.createElement("span");
   msgSpan.innerHTML = msg;
   let timeSpan = document.createElement("span");
@@ -34,11 +45,7 @@ function setChatItem(msg, sender) {
   timeSpan.className = "time";
   chatItem.appendChild(msgSpan);
   chatItem.appendChild(timeSpan);
-  chatBox.appendChild(chatItem);
-  chatBox.scrollTop = chatBox.scrollHeight;
-  if (sender === "me") {
-    ws.send(createMessage(CHAT, msg));
-  }
+  chatItemContainer.appendChild(chatItem);
 }
 
 function getTime() {
@@ -113,30 +120,40 @@ function WSConnection() {
   };
   ws.onmessage = (data) => {
     let msgBody = JSON.parse(data.data);
+    console.log(msgBody);
     switch (msgBody.type) {
-      case WAIT: {
+      case ERROR: {
         toggleElement("loader", "hide");
-        document.getElementById("userDesc").innerHTML = msgBody.msg;
+        document.getElementById("userDesc").innerHTML = EMPTY_STRING;
         toggleElement("typingContainer", "hide");
+        window.history.back();
         break;
       }
 
       case CONNECTED: {
-        console.log("cncted rain");
+        console.log("connected!!");
         toggleElement("loader", "hide");
+        toggleElement("info", "hide");
         document.getElementById("userDesc").innerHTML = "<i>Connected to <i/>" + "<b>" + msgBody.msg + "<b/>";
+        resetChatContainer();
+        toggleElement("chatItemContainer", "show");
         toggleElement("typingContainer", "show");
         break;
       }
 
       case CHAT: {
+        toggleElement("info", "hide");
         setChatItem(msgBody.msg);
+        let chatBox = document.getElementById("chatBox");
+        chatBox.scrollTop = chatBox.scrollHeight;
         break;
       }
       case LEFT: {
         toggleElement("loader", "hide");
         toggleElement("typingContainer", "hide");
         toggleElement("info", "show", msgBody.msg);
+        let chatBox = document.getElementById("chatBox");
+        chatBox.scrollTop = chatBox.scrollHeight;
         break;
       }
     }
@@ -162,4 +179,9 @@ function createMessage(type, msg) {
     msg: msg,
   };
   return JSON.stringify(message);
+}
+
+function resetChatContainer() {
+  let chatItemContainer = document.getElementById("chatItemContainer");
+  chatItemContainer.innerHTML = EMPTY_STRING;
 }
