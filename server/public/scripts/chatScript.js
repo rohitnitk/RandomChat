@@ -1,7 +1,8 @@
-// var url = "localhost";
-// if (screen.width < 1000) {
-//   url = "192.168.43.238";
-// }
+var url = "localhost";
+if (screen.width < 1000) {
+  url = "192.168.43.238";
+}
+
 var ws = new WebSocket("wss://random-p2p-chat.herokuapp.com");
 
 const CONNECTED = "CONNECTED";
@@ -9,6 +10,7 @@ const ERROR = "ERROR";
 const CHAT = "CHAT";
 const NEXT = "NEXT";
 const LEFT = "LEFT";
+const PING = "PING";
 const EMPTY_STRING = "";
 
 document.getElementById("sendBtn").addEventListener("click", function () {
@@ -189,3 +191,8 @@ function resetChatContainer() {
   let chatItemContainer = document.getElementById("chatItemContainer");
   chatItemContainer.innerHTML = EMPTY_STRING;
 }
+
+setInterval(() => {
+  ws.send(createMessage(PING, EMPTY_STRING));
+  console.log("sending PING ...");
+}, 50000);
