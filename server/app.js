@@ -26,7 +26,8 @@ const clientsPool = new Map();
 const availableClients = new Set();
 
 wsServer.on("connection", (client, req) => {
-  let userId = cookieParser.parse(req.headers.cookie).userId;
+  let cookie = req.headers.cookie;
+  let userId = cookieParser.parse(cookie).userId;
   let name = cookieParser.parse(req.headers.cookie).name;
   let user = new User(name, userId, client);
   clientsPool.set(userId, user);
