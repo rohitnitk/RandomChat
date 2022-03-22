@@ -195,4 +195,4 @@ function resetChatContainer() {
 setInterval(() => {
   ws.send(createMessage(PING, EMPTY_STRING));
   console.log("sending PING ...");
-}, 50000);
+}, 30000);
