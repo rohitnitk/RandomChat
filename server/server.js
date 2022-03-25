@@ -15,6 +15,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //set cookie in middleware if not
 app.use(function (req, res, next) {
+  console.log(req.cookies);
   if (req.cookies.userId === undefined) {
     res.cookie("userId", uuidv4(), { maxAge: COOKIE_EXPIRY });
   }
