@@ -165,6 +165,11 @@ function WSConnection() {
     }
     console.log(data.data);
   };
+
+  ws.onclose = () => {
+    alert("Connection to your partner is lost ...We will start from new, Sorry :(");
+    window.history.back();
+  };
 }
 
 function toggleElement(id, flag, string) {
