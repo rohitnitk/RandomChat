@@ -25,6 +25,7 @@ const wsServer = new WebSocket.Server({ server: server });
 const clientsPool = new Map();
 const availableClients = new Set();
 wsServer.on("connection", (client, req) => {
+  console.log("COOKIE_DATA: ");
   console.log(req.headers.cookie);
   let userId = cookieParser.parse(req.headers.cookie).userId;
   let name = cookieParser.parse(req.headers.cookie).name;
