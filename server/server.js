@@ -38,5 +38,9 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "/views/index.html"));
 });
 
+app.get("/.well-known/pki-validation/E1A9F619E4DC3B2CFE3C37A6C15AA2CF.txt", (req, res) => {
+  res.sendFile(path.join(__dirname, "/E1A9F619E4DC3B2CFE3C37A6C15AA2CF.txt"));
+});
+
 server.listen(port, () => console.log("listeining at port " + port));
 module.exports = { server };
