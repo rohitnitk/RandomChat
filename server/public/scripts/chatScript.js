@@ -1,10 +1,4 @@
-var url = "localhost";
-if (screen.width < 1000) {
-  url = "192.168.43.238";
-}
-alert(document.cookie);
 var ws = new WebSocket("wss://random-p2p-chat.herokuapp.com");
-alert(document.cookie);
 
 const CONNECTED = "CONNECTED";
 const ERROR = "ERROR";
@@ -12,6 +6,7 @@ const CHAT = "CHAT";
 const NEXT = "NEXT";
 const LEFT = "LEFT";
 const PING = "PING";
+const PONG = "PONG";
 const EMPTY_STRING = "";
 
 document.getElementById("sendBtn").addEventListener("click", function () {
@@ -163,7 +158,12 @@ function WSConnection() {
         chatBox.scrollTop = chatBox.scrollHeight;
         break;
       }
+
+      case PONG: {
+        console.log("PIONG REC");
+      }
     }
+
     console.log(data.data);
   };
 

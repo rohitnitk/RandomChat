@@ -2,35 +2,26 @@ const cookieParser = require("cookie");
 
 const WebSocket = require("ws");
 const { server } = require("./server");
-const { EMPTY_STRING, LEFT, WAIT, NEXT, CHAT, INFO, CONNECTED, ERROR } = require("./utils/constants");
+const { EMPTY_STRING, LEFT, PONG, NEXT, CHAT, PING, CONNECTED, ERROR } = require("./utils/constants");
 
 const { User } = require("./utils/User");
 const { createMessage } = require("./utils/createMessage");
-const { use } = require("express/lib/application");
-const { send } = require("express/lib/response");
-
-var fs = require("fs");
-var util = require("util");
-var log_file = fs.createWriteStream(__dirname + "/debug.log", { flags: "a" });
-var log_stdout = process.stdout;
-
-console.log = function (d) {
-  //
-  log_file.write(util.format(d) + "\n");
-  log_stdout.write(util.format(d) + "\n");
-};
 
 const wsServer = new WebSocket.Server({ server: server });
 
 const clientsPool = new Map();
 const availableClients = new Set();
+
 wsServer.on("connection", (client, req) => {
+  console.log("connected!!!!");
   console.log("COOKIE_DATA: ");
   console.log(req.headers.cookie);
+
   let userId = cookieParser.parse(req.headers.cookie).userId;
   let name = cookieParser.parse(req.headers.cookie).name;
   let user = new User(name, userId, client);
   clientsPool.set(userId, user);
+
   availableClients.add(userId);
   if (availableClients.size > 1) {
     pairConnect(user);
@@ -72,6 +63,10 @@ wsServer.on("connection", (client, req) => {
           handleOnUserLeft(sender);
           break;
         }
+
+        case PING: {
+          sender.client.send(`${createMessage(PONG, "")}`);
+        }
       }
     } catch (error) {
       console.log(req.headers.cookie + "," + req.headers.host + "," + req.headers.origin + ":", error);
@@ -100,26 +95,25 @@ wsServer.on("connection", (client, req) => {
 });
 
 function pairConnect(sender) {
-  if (availableClients.size > 1) {
-    let recipientId;
-    for (let item of availableClients) {
-      if (item !== sender.userId) {
-        recipientId = item;
-        availableClients.delete(item);
-        availableClients.delete(sender.userId);
-        break;
-      }
-    }
-    let recipient = clientsPool.get(recipientId);
-    if (recipient !== undefined) {
-      clientsPool.set(recipientId, new User(recipient.name, recipient.userId, recipient.client, sender.userId));
-      clientsPool.set(sender.userId, new User(sender.name, sender.userId, sender.client, recipientId));
-      recipient.client.send(`${createMessage(CONNECTED, sender.name)}`);
-      sender.client.send(`${createMessage(CONNECTED, recipient.name)}`);
+  if (availableClients.size <= 1) return;
+
+  let recipientId;
+  for (let item of availableClients) {
+    if (item !== sender.userId) {
+      recipientId = item;
+      availableClients.delete(item);
+      availableClients.delete(sender.userId);
+      break;
     }
   }
+  let recipient = clientsPool.get(recipientId);
+  if (recipient !== undefined) {
+    clientsPool.set(recipientId, new User(recipient.name, recipient.userId, recipient.client, sender.userId));
+    clientsPool.set(sender.userId, new User(sender.name, sender.userId, sender.client, recipientId));
+    recipient.client.send(`${createMessage(CONNECTED, sender.name)}`);
+    sender.client.send(`${createMessage(CONNECTED, recipient.name)}`);
+  }
 }
-``;
 
 function handleOnUserLeft(sender) {
   if (sender.recipientUserId !== undefined) {

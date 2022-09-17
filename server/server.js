@@ -18,14 +18,14 @@ app.use(function (req, res, next) {
   console.log("COOKIE_DATA: ");
   console.log(req.cookies);
   if (req.cookies.userId === undefined) {
-    res.cookie("userId", uuidv4(), { maxAge: COOKIE_EXPIRY, sameSite: false, domain: ".herokuapp.com" });
+    res.cookie("userId", uuidv4(), { maxAge: COOKIE_EXPIRY, sameSite: false });
   }
 
   next();
 });
 
 app.post("/", (req, res) => {
-  res.cookie("name", req.body.name, { maxAge: COOKIE_EXPIRY, sameSite: false, domain: ".herokuapp.com" });
+  res.cookie("name", req.body.name, { maxAge: COOKIE_EXPIRY, sameSite: false });
   res.sendFile(path.join(__dirname, "/views/chat.html"));
 });
 
@@ -36,10 +36,6 @@ app.get("/", (req, res) => {
 
   //else console.log(req.cookies.cookieName)
   res.sendFile(path.join(__dirname, "/views/index.html"));
-});
-
-app.get("/.well-known/pki-validation/E1A9F619E4DC3B2CFE3C37A6C15AA2CF.txt", (req, res) => {
-  res.sendFile(path.join(__dirname, "/E1A9F619E4DC3B2CFE3C37A6C15AA2CF.txt"));
 });
 
 server.listen(port, () => console.log("listeining at port " + port));

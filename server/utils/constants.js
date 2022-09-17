@@ -8,6 +8,8 @@ const CHAT = "CHAT";
 const NEXT = "NEXT";
 const LEFT = "LEFT";
 const INFO = "INFO";
+const PING = "PING";
+const PONG = "PONG";
 const ERROR = "ERROR";
 
 module.exports = {
@@ -20,5 +22,7 @@ module.exports = {
   LEFT,
   INFO,
   NEXT,
+  PING,
+  PONG,
   ERROR,
 };
