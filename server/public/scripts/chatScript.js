@@ -1,4 +1,4 @@
-var ws = new WebSocket("wss://random-p2p-chat.herokuapp.com");
+var ws = new WebSocket("ws://localhost:8080");
 
 const CONNECTED = "CN";
 const ERROR = "E";
@@ -224,6 +224,6 @@ setInterval(() => {
   console.log("sending PING ...");
 }, 30000);
 
-addEventListener("keyup", (event) => {
+document.getElementById("inputBox").addEventListener("input", (event) => {
   if (isPaired) ws.send(createMessage(TYPING, EMPTY_STRING));
 });
