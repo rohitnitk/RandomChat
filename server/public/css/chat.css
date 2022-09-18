@@ -32,6 +32,7 @@ body {
 .user-desc {
   flex: 1;
   margin: 10px;
+  overflow: hidden;
 }
 .btn {
   background-color: rgba(49, 170, 235, 0);
@@ -172,11 +173,12 @@ body {
   justify-content: center;
 }
 .input-box {
-  margin: 2px;
   margin-top: 5px;
   margin-bottom: 5px;
+  margin-left: 2px;
+  margin-right: 5px;
   min-height: 30px;
-  max-height: 300px;
+  max-height: 95%;
   width: 100%;
   border-radius: 5px;
   overflow-y: scroll;

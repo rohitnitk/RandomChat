@@ -32,7 +32,7 @@ document.getElementById("sendBtn").addEventListener("click", function () {
 });
 document.getElementById("homeBtn").addEventListener("click", function () {
   ws.close();
-  window.history.back();
+  window.location = "/";
 });
 document.getElementById("nextBtn").addEventListener("click", function () {
   isPaired = false;
@@ -97,7 +97,7 @@ function removeUnwantedLines(node) {
   }
   children = children.slice(start, end);
   for (let i = 0; i < children.length; i++) {
-    console.log(children[i].nodename);
+    // console.log(children[i].nodename);
     if (children[i].outerHTML === undefined) {
       msgHtml += children[i].textContent;
     } else {
@@ -131,7 +131,7 @@ function WSConnection() {
   };
   ws.onmessage = (data) => {
     let msgBody = JSON.parse(data.data);
-    console.log(msgBody);
+    //console.log(msgBody);
     switch (msgBody.t) {
       case INIT: {
         ws.send(createMessage(INIT));
@@ -188,7 +188,7 @@ function WSConnection() {
       }
     }
 
-    console.log(data.data);
+    //console.log(data.data);
   };
 
   ws.onclose = () => {
@@ -231,7 +231,7 @@ function resetChatContainer() {
 setInterval(() => {
   ws.send(createMessage(PING));
   // console.log("sending PING ...");
-}, 30000);
+}, 50000);
 
 document.getElementById("inputBox").addEventListener("input", (event) => {
   if (isPaired) ws.send(createMessage(TYPING));
