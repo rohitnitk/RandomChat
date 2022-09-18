@@ -86,7 +86,7 @@ function removeUnwantedLines(node) {
   var start = 0,
     end = children.length;
   while (children[start].textContent === EMPTY_STRING) {
-    console.log(children[start]);
+    //   console.log(children[start]);
     start++;
   }
   for (let i = children.length - 1; i >= 0; i--) {
@@ -180,11 +180,11 @@ function WSConnection() {
         clearTimeout(timerFunction);
         timerFunction = setTimeout(() => {
           toggleElement("typingIndicator", "hide");
-        }, 2000);
+        }, 1000);
         break;
       }
       case PONG: {
-        console.log("PIONG REC");
+        break;
       }
     }
 
@@ -199,9 +199,9 @@ function WSConnection() {
 }
 
 function toggleElement(id, flag, string) {
-  console.log(id);
-  console.log(flag);
-  console.log(string);
+  // console.log(id);
+  // console.log(flag);
+  // console.log(string);
   let element = document.getElementById(id);
   if (flag === "show") {
     element.style.visibility = "visible";
@@ -230,11 +230,11 @@ function resetChatContainer() {
 
 setInterval(() => {
   ws.send(createMessage(PING));
-  console.log("sending PING ...");
+  // console.log("sending PING ...");
 }, 30000);
 
 document.getElementById("inputBox").addEventListener("input", (event) => {
-  if (isPaired) ws.send(createMessage(TYPING, EMPTY_STRING));
+  if (isPaired) ws.send(createMessage(TYPING));
 });
 
 function getLocalData(key) {

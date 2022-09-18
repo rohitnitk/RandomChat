@@ -72,11 +72,11 @@ wsServer.on("connection", (client, req) => {
 
           case TYPING: {
             let recipient = clientsPool.get(user.recipientUserId);
-            recipient.client.send(`${createMessage(TYPING, "")}`);
+            recipient.client.send(`${createMessage(TYPING)}`);
             break;
           }
           case PING: {
-            client.send(`${createMessage(PONG, "")}`);
+            client.send(`${createMessage(PONG)}`);
             break;
           }
         }
