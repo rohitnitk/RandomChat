@@ -18,14 +18,14 @@ app.use(function (req, res, next) {
   console.log("COOKIE_DATA: ");
   console.log(req.cookies);
   if (req.cookies.userId === undefined) {
-    res.cookie("userId", uuidv4(), { maxAge: COOKIE_EXPIRY, sameSite: false, domain: ".herokuapp.com" });
+    res.cookie("userId", uuidv4(), { maxAge: COOKIE_EXPIRY, sameSite: false });
   }
 
   next();
 });
 
 app.post("/", (req, res) => {
-  res.cookie("name", req.body.name, { maxAge: COOKIE_EXPIRY, sameSite: false, domain: ".herokuapp.com" });
+  res.cookie("name", req.body.name, { maxAge: COOKIE_EXPIRY, sameSite: false });
   res.sendFile(path.join(__dirname, "/views/chat.html"));
 });
 

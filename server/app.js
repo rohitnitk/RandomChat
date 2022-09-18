@@ -13,91 +13,95 @@ const clientsPool = new Map();
 const availableClients = new Set();
 
 wsServer.on("connection", (client, req) => {
-  console.log("connected!!!!");
-  console.log("COOKIE_DATA: ");
-  console.log(req.cookies);
+  try {
+    console.log("connected!!!!");
+    console.log("COOKIE_DATA: ");
+    console.log(req.headers.cookie);
 
-  let userId = cookieParser.parse(req.headers.cookie).userId;
-  let name = cookieParser.parse(req.headers.cookie).name;
-  let user = new User(name, userId, client);
-  clientsPool.set(userId, user);
+    let userId = cookieParser.parse(req.headers.cookie).userId;
+    let name = cookieParser.parse(req.headers.cookie).name;
+    let user = new User(name, userId, client);
+    clientsPool.set(userId, user);
 
-  availableClients.add(userId);
-  if (availableClients.size > 1) {
-    pairConnect(user);
-  }
-  client.on("message", function incoming(msg) {
-    userId = cookieParser.parse(req.headers.cookie).userId;
-    let sender = clientsPool.get(userId);
-    try {
-      let message = JSON.parse(`${msg}`);
+    availableClients.add(userId);
+    if (availableClients.size > 1) {
+      pairConnect(user);
+    }
+    client.on("message", function incoming(msg) {
+      userId = cookieParser.parse(req.headers.cookie).userId;
+      let sender = clientsPool.get(userId);
+      try {
+        let message = JSON.parse(`${msg}`);
 
-      switch (message.t) {
-        case CHAT: {
-          let recipient = clientsPool.get(sender.recipientUserId);
-          recipient.client.send(`${createMessage(CHAT, message.m)}`);
-          break;
-        }
-
-        case NEXT: {
-          if (sender.recipientUserId !== undefined) {
-            /**
-             * 1. notify receipient (other user)
-             * 2. remove 'send to' of both user
-             */
+        switch (message.t) {
+          case CHAT: {
             let recipient = clientsPool.get(sender.recipientUserId);
-            if (recipient !== undefined) {
-              recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
-              clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
+            recipient.client.send(`${createMessage(CHAT, message.m)}`);
+            break;
+          }
+
+          case NEXT: {
+            if (sender.recipientUserId !== undefined) {
+              /**
+               * 1. notify receipient (other user)
+               * 2. remove 'send to' of both user
+               */
+              let recipient = clientsPool.get(sender.recipientUserId);
+              if (recipient !== undefined) {
+                recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
+                clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
+              }
+              clientsPool.set(sender.userId, new User(sender.name, sender.userId, sender.client));
             }
-            clientsPool.set(sender.userId, new User(sender.name, sender.userId, sender.client));
+            availableClients.add(sender.userId);
+            if (availableClients.size > 1) {
+              pairConnect(sender);
+            }
+            break;
           }
-          availableClients.add(sender.userId);
-          if (availableClients.size > 1) {
-            pairConnect(sender);
+
+          case LEFT: {
+            handleOnUserLeft(sender);
+            break;
           }
-          break;
-        }
 
-        case LEFT: {
-          handleOnUserLeft(sender);
-          break;
+          case TYPING: {
+            let recipient = clientsPool.get(sender.recipientUserId);
+            recipient.client.send(`${createMessage(TYPING, "")}`);
+            break;
+          }
+          case PING: {
+            sender.client.send(`${createMessage(PONG, "")}`);
+            break;
+          }
         }
-
-        case TYPING: {
+      } catch (error) {
+        console.log(req.headers.cookie + "," + req.headers.host + "," + req.headers.origin + ":", error);
+        sender.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
+        if (sender.recipientUserId !== undefined) {
           let recipient = clientsPool.get(sender.recipientUserId);
-          recipient.client.send(`${createMessage(TYPING, "")}`);
-          break;
-        }
-        case PING: {
-          sender.client.send(`${createMessage(PONG, "")}`);
-          break;
+          if (recipient !== undefined) {
+            recipient.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
+          }
         }
       }
-    } catch (error) {
-      console.log(req.headers.cookie + "," + req.headers.host + "," + req.headers.origin + ":", error);
-      sender.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
-      if (sender.recipientUserId !== undefined) {
+    });
+
+    client.on("close", function () {
+      userId = cookieParser.parse(req.headers.cookie).userId;
+      let sender = clientsPool.get(userId);
+      if (sender !== undefined) {
         let recipient = clientsPool.get(sender.recipientUserId);
         if (recipient !== undefined) {
-          recipient.client.send(`${createMessage(ERROR, EMPTY_STRING)}`);
+          clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
+          recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
         }
       }
-    }
-  });
-
-  client.on("close", function () {
-    userId = cookieParser.parse(req.headers.cookie).userId;
-    let sender = clientsPool.get(userId);
-    if (sender !== undefined) {
-      let recipient = clientsPool.get(sender.recipientUserId);
-      if (recipient !== undefined) {
-        clientsPool.set(recipient.userId, new User(recipient.name, recipient.userId, recipient.client));
-        recipient.client.send(`${createMessage(LEFT, "User you were talking to has left...")}`);
-      }
-    }
-    clientsPool.delete(userId);
-  });
+      clientsPool.delete(userId);
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 function pairConnect(sender) {
