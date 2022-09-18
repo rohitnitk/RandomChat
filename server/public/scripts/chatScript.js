@@ -1,5 +1,8 @@
 var ws = new WebSocket("wss://random-p2p-chat.herokuapp.com");
-
+localStorage.clear();
+localStorage.setItem("name", getCookie("name"));
+localStorage.setItem("userId", getCookie("userId"));
+const INIT = "IN";
 const CONNECTED = "CN";
 const ERROR = "E";
 const CHAT = "C";
@@ -9,6 +12,7 @@ const PING = "PI";
 const PONG = "PO";
 const TYPING = "T";
 const EMPTY_STRING = "";
+
 var isPaired = false;
 
 var timerFunction;
@@ -122,7 +126,6 @@ function getCookie(cname) {
 
 function WSConnection() {
   console.log("WS ran...");
-
   ws.onopen = () => {
     console.log("connection opend!");
   };
@@ -130,6 +133,10 @@ function WSConnection() {
     let msgBody = JSON.parse(data.data);
     console.log(msgBody);
     switch (msgBody.t) {
+      case INIT: {
+        ws.send(createMessage(INIT));
+        break;
+      }
       case ERROR: {
         toggleElement("loader", "hide");
         document.getElementById("userDesc").innerHTML = EMPTY_STRING;
@@ -210,6 +217,8 @@ function createMessage(type, msg) {
   let message = {
     t: type,
     m: msg,
+    cn: getLocalData("name"),
+    ui: getLocalData("userId"),
   };
   return JSON.stringify(message);
 }
@@ -220,10 +229,18 @@ function resetChatContainer() {
 }
 
 setInterval(() => {
-  ws.send(createMessage(PING, EMPTY_STRING));
+  ws.send(createMessage(PING));
   console.log("sending PING ...");
 }, 30000);
 
 document.getElementById("inputBox").addEventListener("input", (event) => {
   if (isPaired) ws.send(createMessage(TYPING, EMPTY_STRING));
 });
+
+function getLocalData(key) {
+  if (localStorage.length < 1) {
+    localStorage.setItem("name", getCookie("name"));
+    localStorage.setItem("userId", getCookie("userId"));
+  }
+  return localStorage.getItem(key);
+}

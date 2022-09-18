@@ -8,6 +8,7 @@ const CHAT = "C";
 const NEXT = "N";
 const LEFT = "L";
 const INFO = "I";
+const INIT = "IN";
 const PING = "PI";
 const PONG = "PO";
 const TYPING = "T";
@@ -22,6 +23,7 @@ module.exports = {
   CHAT,
   LEFT,
   INFO,
+  INIT,
   NEXT,
   PING,
   PONG,
