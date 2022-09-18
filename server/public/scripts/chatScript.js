@@ -1,13 +1,17 @@
-var ws = new WebSocket("wss://random-p2p-chat.herokuapp.com");
+var ws = new WebSocket("wss://http://random-p2p-chat.herokuapp.com/");
 
-const CONNECTED = "CONNECTED";
-const ERROR = "ERROR";
-const CHAT = "CHAT";
-const NEXT = "NEXT";
-const LEFT = "LEFT";
-const PING = "PING";
-const PONG = "PONG";
+const CONNECTED = "CN";
+const ERROR = "E";
+const CHAT = "C";
+const NEXT = "N";
+const LEFT = "L";
+const PING = "PI";
+const PONG = "PO";
+const TYPING = "T";
 const EMPTY_STRING = "";
+var isPaired = false;
+
+var timerFunction;
 
 document.getElementById("sendBtn").addEventListener("click", function () {
   let inputBox = document.getElementById("inputBox");
@@ -27,6 +31,8 @@ document.getElementById("homeBtn").addEventListener("click", function () {
   window.history.back();
 });
 document.getElementById("nextBtn").addEventListener("click", function () {
+  isPaired = false;
+  toggleElement("typingIndicator", "hide");
   toggleElement("chatItemContainer", "hide");
   toggleElement("loader", "show");
   toggleElement("userDesc", "show", EMPTY_STRING);
@@ -123,7 +129,7 @@ function WSConnection() {
   ws.onmessage = (data) => {
     let msgBody = JSON.parse(data.data);
     console.log(msgBody);
-    switch (msgBody.type) {
+    switch (msgBody.t) {
       case ERROR: {
         toggleElement("loader", "hide");
         document.getElementById("userDesc").innerHTML = EMPTY_STRING;
@@ -133,10 +139,11 @@ function WSConnection() {
       }
 
       case CONNECTED: {
+        isPaired = true;
         console.log("connected!!");
         toggleElement("loader", "hide");
         toggleElement("info", "hide");
-        document.getElementById("userDesc").innerHTML = "<i>Connected to <i/>" + "<b>" + msgBody.msg + "<b/>";
+        document.getElementById("userDesc").innerHTML = "<i>Connected to <i/>" + "<b>" + msgBody.m + "<b/>";
         resetChatContainer();
         toggleElement("chatItemContainer", "show");
         toggleElement("typingContainer", "show");
@@ -145,20 +152,30 @@ function WSConnection() {
 
       case CHAT: {
         toggleElement("info", "hide");
-        setChatItem(msgBody.msg);
+        setChatItem(msgBody.m);
         let chatBox = document.getElementById("chatBox");
         chatBox.scrollTop = chatBox.scrollHeight;
         break;
       }
       case LEFT: {
+        isPaired = false;
         toggleElement("loader", "hide");
         toggleElement("typingContainer", "hide");
-        toggleElement("info", "show", msgBody.msg);
+        toggleElement("info", "show", msgBody.m);
         let chatBox = document.getElementById("chatBox");
         chatBox.scrollTop = chatBox.scrollHeight;
         break;
       }
-
+      case TYPING: {
+        if (document.getElementById("typingIndicator").style.visibility !== "visible") {
+          toggleElement("typingIndicator", "show");
+        }
+        clearTimeout(timerFunction);
+        timerFunction = setTimeout(() => {
+          toggleElement("typingIndicator", "hide");
+        }, 2000);
+        break;
+      }
       case PONG: {
         console.log("PIONG REC");
       }
@@ -168,12 +185,16 @@ function WSConnection() {
   };
 
   ws.onclose = () => {
+    isPaired = false;
     alert("Connection to your partner is lost ...We will start from new, Sorry :(");
     window.history.back();
   };
 }
 
 function toggleElement(id, flag, string) {
+  console.log(id);
+  console.log(flag);
+  console.log(string);
   let element = document.getElementById(id);
   if (flag === "show") {
     element.style.visibility = "visible";
@@ -187,8 +208,8 @@ function toggleElement(id, flag, string) {
 
 function createMessage(type, msg) {
   let message = {
-    type: type,
-    msg: msg,
+    t: type,
+    m: msg,
   };
   return JSON.stringify(message);
 }
@@ -202,3 +223,7 @@ setInterval(() => {
   ws.send(createMessage(PING, EMPTY_STRING));
   console.log("sending PING ...");
 }, 30000);
+
+addEventListener("keyup", (event) => {
+  if (isPaired) ws.send(createMessage(TYPING, EMPTY_STRING));
+});

@@ -2,7 +2,7 @@ const cookieParser = require("cookie");
 
 const WebSocket = require("ws");
 const { server } = require("./server");
-const { EMPTY_STRING, LEFT, PONG, NEXT, CHAT, PING, CONNECTED, ERROR } = require("./utils/constants");
+const { EMPTY_STRING, LEFT, PONG, NEXT, CHAT, PING, CONNECTED, TYPING, ERROR } = require("./utils/constants");
 
 const { User } = require("./utils/User");
 const { createMessage } = require("./utils/createMessage");
@@ -15,7 +15,7 @@ const availableClients = new Set();
 wsServer.on("connection", (client, req) => {
   console.log("connected!!!!");
   console.log("COOKIE_DATA: ");
-  console.log(req.headers.cookie);
+  console.log(req.cookies);
 
   let userId = cookieParser.parse(req.headers.cookie).userId;
   let name = cookieParser.parse(req.headers.cookie).name;
@@ -32,10 +32,10 @@ wsServer.on("connection", (client, req) => {
     try {
       let message = JSON.parse(`${msg}`);
 
-      switch (message.type) {
+      switch (message.t) {
         case CHAT: {
           let recipient = clientsPool.get(sender.recipientUserId);
-          recipient.client.send(`${createMessage(CHAT, message.msg)}`);
+          recipient.client.send(`${createMessage(CHAT, message.m)}`);
           break;
         }
 
@@ -64,8 +64,14 @@ wsServer.on("connection", (client, req) => {
           break;
         }
 
+        case TYPING: {
+          let recipient = clientsPool.get(sender.recipientUserId);
+          recipient.client.send(`${createMessage(TYPING, "")}`);
+          break;
+        }
         case PING: {
           sender.client.send(`${createMessage(PONG, "")}`);
+          break;
         }
       }
     } catch (error) {

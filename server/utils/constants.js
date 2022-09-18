@@ -2,15 +2,16 @@ const DEFAULT_NAME = "Anonymous";
 const EMPTY_STRING = "";
 const DAYS = 100;
 const COOKIE_EXPIRY = DAYS * 24 * 60 * 60 * 1000;
-const CONNECTED = "CONNECTED";
-const WAIT = "WAIT";
-const CHAT = "CHAT";
-const NEXT = "NEXT";
-const LEFT = "LEFT";
-const INFO = "INFO";
-const PING = "PING";
-const PONG = "PONG";
-const ERROR = "ERROR";
+const CONNECTED = "CN";
+const WAIT = "W";
+const CHAT = "C";
+const NEXT = "N";
+const LEFT = "L";
+const INFO = "I";
+const PING = "PI";
+const PONG = "PO";
+const TYPING = "T";
+const ERROR = "E";
 
 module.exports = {
   DEFAULT_NAME,
@@ -24,5 +25,6 @@ module.exports = {
   NEXT,
   PING,
   PONG,
+  TYPING,
   ERROR,
 };
